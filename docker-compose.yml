@@ -1,0 +1,43 @@
+version: '3.10'
+services:
+  postgres:
+    container_name: BOOK_POSTGRES
+    hostname: ${PG_HOST}
+    image: postgres:14
+    restart: on-failure
+    ports:
+      - '5445:5432'
+    volumes:
+      - ./data/db:/var/lib/postgresql/data:z
+    env_file:
+      .env
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: ${PG_DB_NAME}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    networks:
+      - main
+  backend:
+    container_name: BOOK_BACKEND
+    image: django
+    tty: true
+    hostname: backend
+    build: ./
+    restart: on-failure
+    ports:
+      - '8000'
+    command: >
+      sh -c "python /home/app/manage.py migrate
+      && python /home/app/manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./:/home/app
+    env_file:
+      - .env
+    networks:
+      - main
+
+networks:
+  main:
