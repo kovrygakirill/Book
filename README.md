@@ -11,6 +11,11 @@
 5. python manage.py migrate
 6. python manage.py runserver 0.0.0.0:8000
 
-# or
+# or run from docker
 
 1. docker-compose -f docker-compose.yml up --build -d
+
+# or run from script
+
+1. chmod +x start_django_service.sh
+2. ./start_django_service.sh
